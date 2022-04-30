@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #Main {
+            /* make the Main div center */
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: 600px;
+            height: 900px;
+            border: 5px solid greenyellow;
+        }
+
+        #TopBar {
+            padding-top: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        #Quiz {
+            width: 100%;
+            height: 150px;
+        }
+
+        #quizWrapper {
+            text-align: center;
+            font-size: 80px;
+            color: blue;
+            font-weight: bold;
+        }
+
+        #Play {
+            width: 100%;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #numBtnWrapper {
+            width: 330px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+        }
+
+        #msg {
+            font-weight: bold;
+            line-height: 70%;
+            color: orange;
+            font-size: 50px;
+            height: 80px;
+        }
+
+        #setup {
+            display: flex;
+            width: auto;
+            height: auto;
+            margin: 10px;
+            border: 15px solid #92a692;
+            overflow: hidden;
+        }
+
+        .setup {
+            margin: 3px;
+            height: 100px;
+            border: 2px solid #92a692;
+            flex: 1 1;
+        }
+
+        .selectTitle {
+            display: block;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+
+        #modeSelect {
+            display: flex;
+            justify-content: center;
+            align-content: flex-start;
+        }
+
+        .modeBtn {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            background-size: contain;
+            background-color: transparent;
+            border-style: none;
+        }
+
+        .numBtn {
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+            background-size: contain;
+            background-color: transparent;
+            border-style: none;
+        }
+
+        .Btn:active {
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+        .Btn:focus {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>Please allow Javascript or the image of the button will not load properly</noscript>
+    <div id="Main">
+
+        <div id="TopBar">
+            <div id="setup">
+                <div class="setup">
+                    <span class="selectTitle">Select Game</span>
+                    <div id="modeSelect">
+                        <button id="+"></button>
+                        <button id="-"></button>
+                        <button id="x"></button>
+                        <button id="/"></button>
+                    </div>
+                </div>
+                <div class="setup">
+                    <span class="selectTitle">Select Level</span>
+                    <input type="range" min="1" max="5" value="1" step="1" id="slider"><br>
+                    <span id="level" style="font-size: 20px;"></span>
+                </div>
+            </div>
+            <div id="msg"><span>Quiz starts!</span></div>
+        </div>
+
+        <div id="Quiz">
+            <div id="quizWrapper">
+                <span id="num1">3</span>
+                <span id="opt">+</span>
+                <span id="num2">2</span>
+                <span id="equ">=</span>
+                <span id="ans">?</span>
+
+            </div>
+        </div>
+
+        <div id="Play">
+            <div id="numBtnWrapper">
+                <button id="numBtn-1"></button>
+                <button id="numBtn-2"></button>
+                <button id="numBtn-3"></button>
+                <button id="numBtn-4"></button>
+                <button id="numBtn-5"></button>
+                <button id="numBtn-6"></button>
+                <button id="numBtn-7"></button>
+                <button id="numBtn-8"></button>
+                <button id="numBtn-9"></button>
+                <button id="numBtn-0"></button>
+                <button id="enter" class="numBtn" style="background-image: url(images/enter.png);"
+                    onclick="checkAns()"></button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+
+
+<script lang="javascript">
+    let l, r, mode, slider, userInput, hadInput, prepareChange //for better user experience
+    const modeMapping = {
+        ['+']: '＋',
+        ['-']: '－',
+        ['x']: '×',
+        ['/']: '÷'
+    }
+    const picMapping = {
+        ['+']: 'math_add',
+        ['-']: 'math_subtraction',
+        ['x']: 'math_multiply',
+        ['/']: 'math_division'
+    }
+    const newQuiz = () => {
+        const max = 5 * slider.value;
+        const min = 1 + 5 * (slider.value - 1);
+        l = Math.floor(Math.random() * (max - min + 1)) + min;
+        r = Math.floor(Math.random() * (max - min + 1)) + min;
+        document.getElementById("num1").innerText = l
+        document.getElementById("num2").innerText = r
+        document.getElementById('opt').innerText = modeMapping[mode]
+        const ans = document.getElementById('ans')
+        ans.innerText = '?'
+        ans.style.color = 'blue'
+
+        userInput = 0
+    }
+    const buttonPressed = (i) => {
+        hadInput = true
+        document.getElementById('ans').style.color = 'grey'
+        // limit to 3 digits
+        userInput = userInput < 100 ? userInput * 10 + i : userInput
+        document.getElementById('ans').innerText = userInput
+    }
+    const checkAns = () => {
+        const msg = document.getElementById("msg")
+        if (!hadInput) {
+            if (prepareChange) {
+                newQuiz()
+                return
+            }
+            msg.innerHTML = "<span style='color: orange; font-size: 25px'>Please input answer before pressing Enter</span>" +
+                "<br><span style='color: grey; font-size: 20px'>Too hard? Press once more to change the question</span>";
+            prepareChange = true
+            return
+        } else {
+            hadInput = false
+            prepareChange = false
+        }
+        let result
+        switch (mode) {
+            case "-":
+                result = l - r;
+                break;
+            case "x":
+                result = l * r;
+                break;
+            case "/":
+                result = Math.trunc(l / r);
+                break;
+            default:
+                result = l + r;
+        }
+        if (userInput === result) {
+            msg.innerHTML = "<span style='color: green;'>Well done!</span>";
+            newQuiz()
+        } else {
+            msg.innerHTML = "<span style='color: red;'>Sorry!Wrong!</span>";
+            userInput = 0
+        }
+    }
+    const changeMode = (newMode) => {
+        mode = newMode
+        for (const m of Object.keys(modeMapping)) {
+            if (m === newMode) {
+                document.getElementById(m).style.borderStyle = 'solid'
+            } else {
+                document.getElementById(m).style.borderStyle = 'none'
+            }
+        }
+        newQuiz()
+    }
+    window.onload = () => {
+        for (let i = 0; i < 10; i++) {
+            const numBtnI = document.getElementById(`numBtn-${i}`)
+            numBtnI.style.backgroundImage = `url(images/number${i}.png)`
+            numBtnI.className = "numBtn Btn"
+            numBtnI.onclick = () => { buttonPressed(i) }
+        }
+        slider = document.getElementById("slider");
+        document.getElementById("level").innerHTML = slider.value;
+        slider.oninput = function () {
+            document.getElementById("level").innerHTML = this.value;
+        }
+
+        const selectDiv = document.getElementById('modeSelect')
+
+        for (const btn of selectDiv.children) {
+            btn.style.backgroundImage = `url(images/${picMapping[btn.id]}.png)`
+            btn.className = 'modeBtn Btn'
+            btn.onclick = () => { changeMode(btn.id) }
+        }
+        changeMode('+')
+        newQuiz()
+
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #Main {
+            /* make the Main div center */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 800px;
+            border: 5px solid greenyellow;
+        }
+
+        #TopBar {
+            width: 100%;
+            height: 100px;
+        }
+
+        #Quiz {
+            width: 100%;
+            height: 150px;
+        }
+
+        #quizWrapper {
+            text-align: center;
+            font-size: 80px;
+            color: blue;
+            font-weight: bold;
+        }
+
+        #Play {
+            width: 100%;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #numBtnWrapper {
+            width: 330px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+        }
+
+        #msg {
+            text-align: center;
+            color: orange;
+            font-size: 50px;
+        }
+
+        .numBtn {
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+            background-size: contain;
+            background-color: transparent;
+            border-style: none;
+        }
+
+        .numBtn:active {
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+        .numBtn:focus {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>Please allow Javascript or the image of the button will not load properly</noscript>
+    <div id="Main">
+
+        <div id="TopBar">
+            <h1 id="msg">Quiz starts!</h1>
+        </div>
+
+        <div id="Quiz">
+            <div id="quizWrapper">
+                <span id="num1">3</span>
+                <span id="opt">+</span>
+                <span id="num2">2</span>
+                <span id="equ">=</span>
+                <span id="ans">?</span>
+
+            </div>
+        </div>
+
+        <div id="Play">
+            <div id="numBtnWrapper">
+                <button id="numBtn-1"></button>
+                <button id="numBtn-2"></button>
+                <button id="numBtn-3"></button>
+                <button id="numBtn-4"></button>
+                <button id="numBtn-5"></button>
+                <button id="numBtn-6"></button>
+                <button id="numBtn-7"></button>
+                <button id="numBtn-8"></button>
+                <button id="numBtn-9"></button>
+                <button id="numBtn-0"></button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+<script lang="javascript">
+    let l, r
+    const newQuiz = () => {
+        l = Math.floor((Math.random() * 4) + 1)
+        r = Math.floor((Math.random() * 4) + 1)
+        document.getElementById("num1").innerText = l
+        document.getElementById("num2").innerText = r
+    }
+    const checkAns = (id) => {
+        const correct = l + r
+        if (id === correct) {
+            document.getElementById("msg").innerHTML = "<span style='color: green;'>Well done!</span>";
+            newQuiz()
+        } else {
+            document.getElementById("msg").innerHTML = "<span style='color: red;'>Sorry!Wrong!</span>";
+        }
+    }
+    window.onload = () => {
+        for (let i = 0; i < 10; i++) {
+            const numBtnI = document.getElementById(`numBtn-${i}`)
+            numBtnI.style.backgroundImage = `url(images/number${i}.png)`
+            numBtnI.className = "numBtn"
+            numBtnI.onclick = () => { checkAns(i) }
+        }
+        newQuiz()
+    }
+
+</script>
+
+</html>
